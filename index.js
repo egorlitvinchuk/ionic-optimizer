@@ -13,57 +13,78 @@ var fs = require('fs'),
 // Loop should start here
 var workingDir = 'www';
 
-var result = useref(fread(djoin('index.html'))),
-	resources = result[1].js;
+var rootdir = process.argv[2];
+
+if (rootdir) {
+
+	var platforms = (process.env.CORDOVA_PLATFORMS ? process.env.CORDOVA_PLATFORMS.split(',') : []);
+
+	for(var x=0; x<platforms.length; x++) {
+		try {
+			var platform = platforms[x].trim().toLowerCase();
+			workingDir = platform === 'android' ?
+				path.join('platforms', platform, 'assets', 'www') :
+				path.join('platforms', platform, 'www');
 
 
-console.log('Processing index.html');
-fs.writeFileSync(djoin('index.html'), result[0]);
+			console.log('Reading index.html for', platform);
 
-for (var filename in resources) {
+			var result = useref(fread(djoin('index.html'))),
+				resources = result[1].js;
 
-	// Get updated array of assets
-	var assets = prepareAssetsLinks(resources[filename].assets),
-		uglified;
+			console.log('Processing index.html');
+			fs.writeFileSync(djoin('index.html'), result[0]);
 
-	// Check if not vendor
-	// todo: parameterize this limitation
-	if (filename === 'app.js') {
+			for (var filename in resources) {
 
-		// Annotating in parallel
-		console.log('Annotaing application\'s sources');
-		async.each(assets, annotateFile, function (err) {
-			if (err) {
-				console.error(err);
+				// Get updated array of assets
+				var assets = prepareAssetsLinks(resources[filename].assets);
+
+				// Check if not vendor
+				// todo: parameterize this limitation
+				if (filename === 'app.js') {
+
+					// Annotating in parallel
+					console.log('Annotaing application\'s sources');
+					async.each(assets, annotateFile, function (err) {
+						if (err) {
+							console.error(err);
+						}
+
+						console.log('Minifying application\'s sources');
+						// todo: implement parametric callback
+						fs.writeFile(djoin(filename), minifier.minify(assets).code, function (err) {
+							if (err)
+								console.error(err);
+
+							console.log('Removing sources folder');
+							deleteFolderRecursive(djoin('js'));
+						});
+					})
+				} else {
+					console.log('Minifying vendor sources');
+					// todo: implement parametric callback
+					fs.writeFile(djoin(filename), minifier.minify(assets).code, function (err) {
+						if (err)
+							console.error(err);
+
+						console.log('Removing sources folder');
+						deleteFolderRecursive(djoin('lib'));
+					});
+				}
 			}
-
-			console.log('Minifying application\'s sources');
-			// todo: implement parametric callback
-			fs.writeFile(djoin(filename), minifier.minify(assets).code, function (err) {
-				if (err)
-					console.error(err);
-
-				console.log('Removing sources folder');
-				deleteFolderRecursive(djoin('js'));
-			});
-		})
-	} else {
-		console.log('Minifying vendor sources');
-		// todo: implement parametric callback
-		fs.writeFile(djoin(filename), minifier.minify(assets).code, function (err) {
-			if (err)
-				console.error(err);
-
-			console.log('Removing sources folder');
-			deleteFolderRecursive(djoin('lib'));
-		});
+		} catch(e) {
+			process.stdout.write(e);
+		}
 	}
 }
 
 
+
+
 // todo: replace working dir here
 function djoin(p) {
-	return path.normalize(path.join(__dirname, workingDir, p));
+	return path.normalize(path.join(workingDir, p));
 }
 function fread(f) {
 	return fs.readFileSync(f, {encoding: 'utf-8'});
