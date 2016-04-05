@@ -10,10 +10,10 @@ var installFolder = path.join(cwd, '../../', 'hooks', 'after_prepare');
 try {
 
 	if (fs.lstatSync(installFolder).isDirectory()) {
-		fs.createReadStream(path.join(cwd, '../', 'index.js'))
+		fs.createReadStream(path.join(cwd, 'index.js'))
 			.pipe(fs.createWriteStream(path.join(installFolder, '020_ionic_optimizer.js')));
 	}
-	
+
 } catch (err) {
 	console.log('We\'ve got an error here:', err);
 }
