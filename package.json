@@ -1,6 +1,6 @@
 {
   "name": "ionic-optimizer",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "The ionic hook that minimises application sources",
   "main": "index.js",
   "scripts": {
