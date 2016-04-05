@@ -1,0 +1,31 @@
+{
+  "name": "ionic-optimizer",
+  "version": "0.1.0",
+  "description": "The ionic hook that minimises application sources",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/egorlitvinchuk/ionic-optimizer.git"
+  },
+  "keywords": [
+    "ionic",
+    "uglify",
+    "minimize",
+    "hook"
+  ],
+  "author": "Egor Litvinchuk <egor.litvinchuk@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/egorlitvinchuk/ionic-optimizer/issues"
+  },
+  "homepage": "https://github.com/egorlitvinchuk/ionic-optimizer#readme",
+  "dependencies": {
+    "async": "^2.0.0-rc.2",
+    "ng-annotate": "^1.2.1",
+    "node-useref": "^0.3.15",
+    "uglify-js": "^2.6.2"
+  }
+}
