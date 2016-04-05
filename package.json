@@ -4,7 +4,8 @@
   "description": "The ionic hook that minimises application sources",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "postinstall": "node scripts/install.js",
+    "postuninstall": "node scripts/uninstall.js"
   },
   "repository": {
     "type": "git",
@@ -13,11 +14,11 @@
   "keywords": [
     "ionic",
     "uglify",
-    "minimize",
+    "minify",
     "hook"
   ],
   "author": "Egor Litvinchuk <egor.litvinchuk@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/egorlitvinchuk/ionic-optimizer/issues"
   },
